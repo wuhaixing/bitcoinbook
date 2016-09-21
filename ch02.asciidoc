@@ -168,6 +168,8 @@ The response in <<example_2-2>> shows one unspent output (one that has not been 
 View the http://bit.ly/1tAeeGr[transaction from Joe to Alice].
 ====
 
+*这是不是说只要知道一个人的所有地址，就能知道TA有多少钱？这让人还怎么哭穷？！！！*
+
 As you can see, Alice's wallet contains enough bitcoins in a single unspent output to pay for the cup of coffee. Had this not been the case, Alice's wallet application might have to "rummage" through a pile of smaller unspent outputs, like picking coins from a purse until it could find enough to pay for coffee. In both cases, there might be a need to get some change back, which we will see in the next section, as the wallet application creates the transaction outputs (payments).(((range="endofrange", startref="ix_ch02-asciidoc5")))
 
 
@@ -175,9 +177,13 @@ As you can see, Alice's wallet contains enough bitcoins in a single unspent outp
 
 ((("transactions","outputs, creating")))A transaction output is created in the form of a script that creates an encumbrance on the value and can only be redeemed by the introduction of a solution to the script. In simpler terms, Alice's transaction output will contain a script that says something like, "This output is payable to whoever can present a signature from the key corresponding to Bob's public address." Because only Bob has the wallet with the keys corresponding to that address, only Bob's wallet can present such a signature to redeem this output. Alice will therefore "encumber" the output value with a demand for a signature from Bob. 
 
+*一条交易的输出中含有一个script，如果把交易看做一个装有一定额度比特币的盒子，那么这个script就像一把锁一样，只有解开这个script才能用这条交易中的比特币。用signature可以解开这个script，而只有跟收款方的公开账号地址相匹配的key才能产生这样的signature，也就是说只有收款方才能解开这个script。这个script是怎么产生的呢？钱包又是如何判断拿到的signature能把它解开的呢？*
+
 This transaction will also include a second output, because Alice's funds are in the form of a 0.10 BTC output, too much money for the 0.015 BTC cup of coffee. Alice will need 0.085 BTC in change. Alice's change payment is created _by Alice's wallet_ in the very same transaction as the payment to Bob. Essentially, Alice's wallet breaks her funds into two payments: one to Bob, and one back to herself. She can then use the change output in a subsequent transaction, thus spending it later. 
 
 Finally, for the transaction to be processed by the network in a timely fashion, Alice's wallet application will add a small fee. This is not explicit in the transaction; it is implied by the difference between inputs and outputs. If instead of taking 0.085 in change, Alice creates only 0.0845 as the second output, there will be 0.0005 BTC (half a millibitcoin) left over. The input's 0.10 BTC is not fully spent with the two outputs, because they will add up to less than 0.10. The resulting difference is the _transaction fee_ that is collected by the miner as a fee for including the transaction in a block and putting it on the blockchain ledger.
+
+*手续费的费率是固定的吗？如果矿工愿意免费清算怎么办？*
 
 The resulting transaction can be seen using a blockchain explorer web application, as shown in <<transaction-alice>>.
 
@@ -225,6 +231,8 @@ The bitcoin system of trust is based on computation. Transactions are bundled in
 
 A good way to describe mining is like a giant competitive game of sudoku that resets every time someone finds a solution and whose difficulty automatically adjusts so that it takes approximately 10 minutes to find a solution. Imagine a giant sudoku puzzle, several thousand rows and columns in size. If I show you a completed puzzle you can verify it quite quickly. However, if the puzzle has a few squares filled and the rest are empty, it takes a lot of work to solve! The difficulty of the sudoku can be adjusted by changing its size (more or fewer rows and columns), but it can still be verified quite easily even if it is very large. The "puzzle" used in bitcoin is based on a cryptographic hash and exhibits similar characteristics: it is asymmetrically hard to solve but easy to verify, and its difficulty can be adjusted.
 
+*超大数独这个比喻我给满分！求解难；验证结果简单；难度可调节。*
+
 In <<user-stories>>, we introduced Jing, a computer engineering student in Shanghai. Jing is participating in the bitcoin network as a miner. Every 10 minutes or so, Jing joins thousands of other miners in a global race to find a solution to a block of transactions. Finding such a solution, the so-called proof of work, requires quadrillions of hashing operations per second across the entire bitcoin network. The algorithm for proof of work involves repeatedly hashing the header of the block and a random number with the SHA256 cryptographic algorithm until a solution matching a predetermined pattern emerges. The first miner to find such a solution wins the round of competition and publishes that block into the blockchain. 
 
 ((("mining","profitability of")))Jing started mining in 2010 using a very fast desktop computer to find a suitable proof of work for new blocks. As more miners started joining the bitcoin network, the difficulty of the problem increased rapidly. Soon, Jing and other miners upgraded to more specialized hardware, such as high-end dedicated graphical processing units (GPUs) cards such as those used in gaming desktops or consoles. At the time of this writing, the difficulty is so high that it is profitable only to mine with application-specific integrated circuits (ASIC), essentially hundreds of mining algorithms printed in hardware, running in parallel on a single silicon chip. Jing also joined a "mining pool," which much like a lottery pool allows several participants to share their efforts and the rewards. Jing now runs two USB-connected ASIC machines to mine for bitcoin 24 hours a day. He pays his electricity costs by selling the bitcoin he is able to generate from mining, creating some income from the profits. His computer runs a copy of bitcoind, the reference bitcoin client, as a backend to his specialized mining software.
@@ -242,6 +250,8 @@ You can see the block that includes https://blockchain.info/block-height/277316[
 A few minutes later, a new block, #277317, is mined by another miner. Because this new block is based on the previous block (#277316) that contained Alice's transaction, it added even more computation on top of that block, thereby strengthening the trust in those transactions. The block containing Alice's transaction is counted as one "confirmation" of that transaction. Each block mined on top of the one containing the transaction is an additional confirmation. As the blocks pile on top of each other, it becomes exponentially harder to reverse the transaction, thereby making it more and more trusted by the network. 
 
 In the diagram in <<block-alice1>>  we can see block #277316, which contains Alice's transaction. Below it are 277,316 blocks (including block #0), linked to each other in a chain of blocks (blockchain) all the way back to block #0, known as the _genesis block_. Over time, as the "height" in blocks increases, so does the computation difficulty for each block and the chain as a whole. The blocks mined after the one that contains Alice's transaction act as further assurance, as they pile on more computation in a longer and longer chain. By convention, any block with more than six confirmations is considered irrevocable, because it would require an immense amount of computation to invalidate and recalculate six blocks. We will examine the process of mining and the way it builds trust in more detail in <<ch8>>.
+
+*那么多交易都串到一起，数据量会不会大了点，有截断机制吗？*
 
 [[block-alice1]]
 .Alice's transaction included in block #277316
